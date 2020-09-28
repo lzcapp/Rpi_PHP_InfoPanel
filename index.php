@@ -1,9 +1,6 @@
 <?php
 	ob_start();
 
-	define(LANGUAGE, "english");
-
-
 	$temp = shell_exec('cat /sys/class/thermal/thermal_zone*/temp');
 	$temp = round($temp / 1000, 1);
 
@@ -19,10 +16,15 @@
 
 	$uptimedata = shell_exec('uptime');
 	$uptime = explode(' up ', $uptimedata);
-	$uptime = explode(',', $uptime[1]);
-	$uptime = $uptime[0] . ', ' . $uptime[1];
-
-	include 'localization/' . LANGUAGE . '.lang.php';
+	$uptime = explode(', ', $uptime[1]);
+        $uptimehm = explode(':', $uptime[1]);
+	$hs = '';
+        if ($uptimehm[0] > 1)
+		$hs = 's';
+	$ms = '';
+	if ($uptimehm[1] > 1)
+                $ms = 's';
+	$uptime = $uptime[0] . $uptimehm[0] . ' hour' . $hs . ' ' . $uptimehm[1] . ' minute' . $ms;
 ?>
 
 <!DOCTYPE html>
@@ -33,7 +35,6 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Raspberry Pi Control Panel</title>
 	<link rel="stylesheet" href="stylesheets/main.css">
-	<link rel="stylesheet" href="stylesheets/button.css">
 	<script src="javascript/raphael.2.1.0.min.js"></script>
 	<script src="javascript/justgage.1.0.1.min.js"></script>
 
@@ -63,7 +64,14 @@
 		<img id="logo" src="images/logo.png">
 		<div id="title">Raspberry Pi PHP Info Panel</div>
 		<?php if (isset($uptime)) { ?>
-			<div id="uptime"><b><?php echo TXT_RUNTIME; ?></b>&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $uptime; ?> <span STYLE="font-size: 8px;">(hh:mm)</span></div>
+			<div id="uptime">
+				<br/>
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<b>Uptime:</b>
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<?php echo $uptime; ?>
+				<span STYLE="font-size: 8px;"></span>
+			</div>
 		<?php } ?>
 
 		<?php if (isset($temp) && is_numeric($temp)) { ?>
@@ -74,7 +82,7 @@
 					value: <?php echo $temp; ?>,
 					min: 0,
 					max: 100,
-					title: "<?php echo TXT_TEMPERATURE; ?>",
+					title: "Temperature",
 					label: "°C"
 				});
 			</script>
@@ -88,7 +96,7 @@
 					value: <?php echo $voltage; ?>,
 					min: 0.8,
 					max: 1.4,
-					title: "<?php echo TXT_VOLTAGE; ?>",
+					title: "CPU Voltage",
 					label: "V"
 				});
 			</script>
@@ -102,7 +110,7 @@
 					value: <?php echo $cpuusage; ?>,
 					min: 0,
 					max: 100,
-					title: "<?php echo TXT_USAGE; ?>",
+					title: "CPU Usage",
 					label: "%"
 				});
 			</script>
@@ -116,7 +124,7 @@
 					value: <?php echo $clock; ?>,
 					min: 0,
 					max: 1000,
-					title: "<?php echo TXT_CLOCK; ?>",
+					title: "CPU Clock Speed",
 					label: "MHz"
 				});
 			</script>
