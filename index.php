@@ -14,6 +14,8 @@
 
 	$cpuusage = 100 - shell_exec("vmstat | tail -1 | awk '{print $15}'");
 
+        $datetime = shell_exec('date');
+
 	$uptimedata = shell_exec('uptime');
 	$uptime = explode(' up ', $uptimedata);
 	$uptime = explode(', ', $uptime[1]);
@@ -50,7 +52,7 @@
 		window.onload = doLoad;
 
 		function doLoad() {
-			setTimeout("refresh()", 30 * 1000);
+			setTimeout("refresh()", 10 * 1000);
 		}
 
 		function refresh() {
@@ -63,16 +65,24 @@
 	<div id="container">
 		<img id="logo" src="images/logo.png">
 		<div id="title">Raspberry Pi PHP Info Panel</div>
+		<div id="uptime">
+			<br/>
+			<b>Datetime:</b>
+			&nbsp;&nbsp;
+			<?php echo $datetime; ?>
+			<span STYLE="font-size: 8px;"></span>
+		</div>
+
 		<?php if (isset($uptime)) { ?>
-			<div id="uptime">
-				<br/>
-				&nbsp;&nbsp;&nbsp;&nbsp;
-				<b>Uptime:</b>
-				&nbsp;&nbsp;&nbsp;&nbsp;
-				<?php echo $uptime; ?>
-				<span STYLE="font-size: 8px;"></span>
-			</div>
-		<?php } ?>
+                        <div id="uptime">
+                                <br/>
+                                <b>Uptime:</b>
+                                &nbsp;&nbsp;
+                                <?php echo $uptime; ?>
+                                <span STYLE="font-size: 8px;"></span>
+                        </div>
+                <?php } ?>
+
 
 		<?php if (isset($temp) && is_numeric($temp)) { ?>
 			<div id="tempgauge"></div>
